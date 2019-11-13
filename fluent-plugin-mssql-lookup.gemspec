@@ -8,16 +8,11 @@ Gem::Specification.new do |spec|
   spec.email   = ["alastairhails@datasoftcomputing.com"]
 
   spec.summary       = "FluentD filter plugin for resolving additional fields via a database lookup"
-  spec.description   = "FluentD filter plugin for resolving additional fields via a database lookup"
   spec.homepage      = "https://github.com/datasoft-computing/fluent-plugin-mssql-lookup"
   spec.license       = "Apache-2.0"
 
-  test_files, files  = `git ls-files -z`.split("\x0").partition do |f|
-    f.match(%r{^(test|spec|features)/})
-  end
-  spec.files         = files
-  spec.executables   = files.grep(%r{^bin/}) { |f| File.basename(f) }
-  spec.test_files    = test_files
+  spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
+  spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
   spec.add_development_dependency "bundler", "~> 2.0"
