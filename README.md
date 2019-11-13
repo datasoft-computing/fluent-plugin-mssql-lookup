@@ -9,7 +9,7 @@ A Docker image has been included that extends the Kubernetes provided one [here]
 
 ## Requirements
 
-| fluent-plugin-filter-geoip | fluentd         | ruby   |
+| fluent-plugin-mssql-lookup | fluentd         | ruby   |
 | -------------------------- | --------------- | ------ |
 | 1.x.x                      | >= 0.14.0, < 2  | >= 2.1 |
 
