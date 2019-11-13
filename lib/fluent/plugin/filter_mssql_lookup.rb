@@ -28,6 +28,7 @@ module Fluent
       config_param :db_port, :integer, :default => 1433, :desc => 'Database port'
       config_param :lookup_sql, :string, :desc => 'SQL script to execute to refresh the lookup'
       config_param :lookup_key, :string, :desc => 'Key to join on in the returned results'
+      config_param :lookup_interval, :integer, :default => 600, :desc => 'Interval at which to refresh the lookup list in seconds'
       config_param :key, :string, :desc => 'Field in the event that links to the lookup'
 
       helpers :timer
@@ -42,7 +43,7 @@ module Fluent
         super
 
         lookup_refresh
-        timer_execute(:refresh_timer, 30) do
+        timer_execute(:refresh_timer, @lookup_interval) do
           lookup_refresh
         end
       end
