@@ -27,6 +27,7 @@ module Fluent
       config_param :db_name, :string, :desc => 'Database name'
       config_param :db_port, :integer, :default => 1433, :desc => 'Database port'
       config_param :lookup_sql, :string, :desc => 'SQL script to execute to refresh the lookup'
+      config_param :lookup_key, :string, :desc => 'Key to join on in the returned results'
       config_param :key, :string, :desc => 'Field in the event that links to the lookup'
 
       helpers :timer
@@ -50,7 +51,7 @@ module Fluent
         client = TinyTds::Client.new username: @db_user, password: @db_password, host: @db_host, port: @db_port, database: @db_name
         results = client.execute(@lookup_sql)
         results.each do |row|
-          id = row["ID"]
+          id = row[@lookup_key]
           @lookup[id] = row
         end
       end
@@ -58,12 +59,14 @@ module Fluent
       def filter(tag, time, record)
         id = record[@key]
 
-        return if id.nil?
+        return record if id.nil?
 
-        match = @lookup[id]
-        return if match.nil?
+        upid = id.upcase
+        match = @lookup[upid]
+        return record if match.nil?
 
         match.each do |key,val| 
+          next if key == @lookup_key
           name = key.downcase
           record[name] = val
         end
