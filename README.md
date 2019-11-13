@@ -38,6 +38,6 @@ You can copy and paste generated documents here.
 
 ## Copyright
 
-* Copyright(c) 2019- Alastair Hails
+* Copyright(c) 2019 Datasoft Computing Ltd
 * License
   * Apache License, Version 2.0
