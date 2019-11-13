@@ -11,9 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-# This Dockerfile will build an image that is configured
-# to run Fluentd with an Elasticsearch plug-in and the
+# This Dockerfile will build an image that is configured # to run Fluentd with an Elasticsearch plug-in and the
 # provided configuration file.
 # The image acts as an executable for the binary /usr/sbin/td-agent.
 # Note that fluentd is run with root permssion to allow access to
@@ -44,6 +42,15 @@ RUN BUILD_DEPS="make gcc g++ libc6-dev ruby-dev libffi-dev" \
     && clean-apt \
     # Ensure fluent has enough file descriptors
     && ulimit -n 65536
+
+# Install FreeTDS
+RUN clean-install wget build-essential \
+    && wget http://www.freetds.org/files/stable/freetds-1.1.21.tar.gz \
+    && tar -xzf freetds-1.1.21.tar.gz \
+    && cd freetds-1.1.21 \
+    && ./configure \
+    && make \
+    && make install
 
 # Copy the Fluentd configuration file for logging Docker container logs.
 COPY fluent.conf /etc/fluent/fluent.conf
