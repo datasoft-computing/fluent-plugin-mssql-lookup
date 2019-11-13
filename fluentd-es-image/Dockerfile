@@ -29,28 +29,26 @@ COPY Gemfile /Gemfile
 # 2. Install fluentd via ruby.
 # 3. Remove build dependencies.
 # 4. Cleanup leftover caches & files.
-RUN BUILD_DEPS="make gcc g++ libc6-dev ruby-dev libffi-dev" \
+RUN BUILD_DEPS="make gcc g++ libc6-dev ruby-dev libffi-dev wget build-essential" \
     && clean-install $BUILD_DEPS \
                      ca-certificates \
                      libjemalloc1 \
                      ruby \
     && echo 'gem: --no-document' >> /etc/gemrc \
     && gem install --file Gemfile \
+    && wget http://www.freetds.org/files/stable/freetds-1.1.21.tar.gz \
+    && tar -xzf freetds-1.1.21.tar.gz \
+    && cd freetds-1.1.21 \
+    && ./configure \
+    && make \
+    && make install \
+    && gem install tiny_tds \
     && apt-get purge -y --auto-remove \
                      -o APT::AutoRemove::RecommendsImportant=false \
                      $BUILD_DEPS \
     && clean-apt \
     # Ensure fluent has enough file descriptors
     && ulimit -n 65536
-
-# Install FreeTDS
-RUN clean-install wget build-essential \
-    && wget http://www.freetds.org/files/stable/freetds-1.1.21.tar.gz \
-    && tar -xzf freetds-1.1.21.tar.gz \
-    && cd freetds-1.1.21 \
-    && ./configure \
-    && make \
-    && make install
 
 # Copy the Fluentd configuration file for logging Docker container logs.
 COPY fluent.conf /etc/fluent/fluent.conf
