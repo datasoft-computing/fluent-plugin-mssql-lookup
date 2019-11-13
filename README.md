@@ -1,8 +1,17 @@
 # fluent-plugin-mssql-lookup
 
-[Fluentd](https://fluentd.org/) filter plugin to do something.
+[Fluentd](https://fluentd.org/) filter plugin that resolves additional fields via a database lookup
 
-TODO: write description for you plugin.
+In order to communicate with the SQL Server database, we use [FreeTDS](https://www.freetds.org/)
+Consequently this will need to be installed in order to use the plugin.
+
+A Docker image has been included that extends the Kubernetes provided one [here](https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/fluentd-elasticsearch/fluentd-es-image)
+
+## Requirements
+
+| fluent-plugin-filter-geoip | fluentd         | ruby   |
+| -------------------------- | --------------- | ------ |
+| 1.x.x                      | >= 0.14.0, < 2  | >= 2.1 |
 
 ## Installation
 
@@ -26,15 +35,59 @@ And then execute:
 $ bundle
 ```
 
-## Configuration
+## Config parameters
 
-You can generate configuration template:
+### db_user
+
+The user name to use to connect to the database
 
 ```
-$ fluent-plugin-config-format filter mssql-lookup
+db_user myuser
 ```
 
-You can copy and paste generated documents here.
+### db_password
+
+The password to use to connect to the database
+
+```
+db_password mypassword
+```
+
+### db_host
+
+The database server host name or ip address
+```
+db_host mydbserver
+```
+
+### db_name
+
+The name of the database to connect to
+```
+db_name mydb
+```
+
+### lookup_sql
+
+The SQL to execute to populate the lookup list
+```
+lookup_sql "SELECT ID, Field1, Field2 FROM mytable"
+```
+
+### lookup_key
+
+The field within the lookup list that will be used to join to the event key field
+```
+lookup_key ID
+```
+
+### key
+
+The key field in the event
+```
+key id
+```
+
 
 ## Copyright
 
