@@ -67,6 +67,13 @@ The name of the database to connect to
 db_name mydb
 ```
 
+### db_port
+
+The database port to connect to (default 1433)
+```
+db_port 1433
+```
+
 ### lookup_sql
 
 The SQL to execute to populate the lookup list
@@ -79,6 +86,13 @@ lookup_sql "SELECT ID, Field1, Field2 FROM mytable"
 The field within the lookup list that will be used to join to the event key field
 ```
 lookup_key ID
+```
+
+### lookup_interval
+
+The recurring interval (in seconds) at which to refresh the lookup list (default 600)
+```
+lookup_interval 1200
 ```
 
 ### key
