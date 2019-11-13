@@ -7,9 +7,9 @@ Gem::Specification.new do |spec|
   spec.authors = ["Alastair Hails"]
   spec.email   = ["alastairhails@datasoftcomputing.com"]
 
-  spec.summary       = %q{TODO: Write a short summary, because Rubygems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.summary       = "FluentD filter plugin for resolving additional fields via a database lookup"
+  spec.description   = "FluentD filter plugin for resolving additional fields via a database lookup"
+  spec.homepage      = "https://github.com/datasoft-computing/fluent-plugin-mssql-lookup"
   spec.license       = "Apache-2.0"
 
   test_files, files  = `git ls-files -z`.split("\x0").partition do |f|
@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
   spec.test_files    = test_files
   spec.require_paths = ["lib"]
 
-  spec.add_development_dependency "bundler", "~> 1.14"
+  spec.add_development_dependency "bundler", "~> 2.0"
   spec.add_development_dependency "rake", "~> 12.0"
   spec.add_development_dependency "test-unit", "~> 3.0"
   spec.add_runtime_dependency "fluentd", [">= 0.14.10", "< 2"]

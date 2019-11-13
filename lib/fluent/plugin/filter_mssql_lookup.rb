@@ -29,6 +29,8 @@ module Fluent
       config_param :lookup_sql, :string, :desc => 'SQL script to execute to refresh the lookup'
       config_param :key, :string, :desc => 'Field in the event that links to the lookup'
 
+      helpers :timer
+
       def initialize
         super
 
@@ -38,6 +40,7 @@ module Fluent
       def start
         super
 
+        lookup_refresh
         timer_execute(:refresh_timer, 30) do
           lookup_refresh
         end
@@ -48,7 +51,7 @@ module Fluent
         results = client.execute(@lookup_sql)
         results.each do |row|
           id = row["ID"]
-          lookup[id] = row
+          @lookup[id] = row
         end
       end
 
@@ -60,7 +63,12 @@ module Fluent
         match = @lookup[id]
         return if match.nil?
 
-        pp match
+        match.each do |key,val| 
+          name = key.downcase
+          record[name] = val
+        end
+
+        return record
       end
     end
   end
