@@ -2,14 +2,13 @@
 
 [Fluentd](https://fluentd.org/) filter plugin that resolves additional fields via a database lookup
 
-In order to communicate with the SQL Server database, we use [FreeTDS](https://www.freetds.org/)
-Consequently this will need to be installed in order to use the plugin.
+In order to communicate with the SQL Server database, we use [FreeTDS](https://www.freetds.org/).  Consequently this will need to be installed in order to use the plugin.  This repository also contains Dockerfile that adds FreeTDS to the standard image provided [here](https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/fluentd-elasticsearch/fluentd-es-image).
 
-A Docker image has been included that extends the Kubernetes provided one [here](https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/fluentd-elasticsearch/fluentd-es-image)
+A prebuilt version of this Docker image is available at http://quay.io/datasoft-computing/fluentd
 
 ## Requirements
 
-| fluent-plugin-filter-geoip | fluentd         | ruby   |
+| fluent-plugin-mssql-lookup | fluentd         | ruby   |
 | -------------------------- | --------------- | ------ |
 | 1.x.x                      | >= 0.14.0, < 2  | >= 2.1 |
 
