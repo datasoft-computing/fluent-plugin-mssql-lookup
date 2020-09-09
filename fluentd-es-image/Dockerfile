@@ -52,6 +52,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 COPY fluent.conf /etc/fluent/fluent.conf
 COPY entrypoint.sh /entrypoint.sh
 COPY --from=builder /usr/local/bundle/ /usr/local/bundle 
+COPY --from=builder /usr/local/lib /usr/local/lib
 
 SHELL ["/bin/bash", "-e", "-o", "pipefail", "-c"]
 
