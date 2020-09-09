@@ -1,5 +1,4 @@
 # Copyright 2017 The Kubernetes Authors.
-# Modifications copyright (C) 2019 Datasoft Computing Ltd 
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,53 +11,65 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# This Dockerfile will build an image that is configured # to run Fluentd with an Elasticsearch plug-in and the
+
+# This Dockerfile will build an image that is configured
+# to run Fluentd with an Elasticsearch plug-in and the
 # provided configuration file.
 # The image acts as an executable for the binary /usr/sbin/td-agent.
 # Note that fluentd is run with root permssion to allow access to
 # log files with root only access under /var/log/containers/*
 
-FROM debian:stretch-slim
-
-ARG DEBIAN_FRONTEND=noninteractive
-
-COPY clean-apt /usr/bin
-COPY clean-install /usr/bin
-COPY Gemfile /Gemfile
-
 # 1. Install & configure dependencies.
 # 2. Install fluentd via ruby.
 # 3. Remove build dependencies.
 # 4. Cleanup leftover caches & files.
-RUN BUILD_DEPS="make gcc g++ libc6-dev ruby-dev libffi-dev wget build-essential" \
-    && clean-install $BUILD_DEPS \
-                     ca-certificates \
-                     libjemalloc1 \
-                     ruby \
-    && echo 'gem: --no-document' >> /etc/gemrc \
-    && gem install --file Gemfile \
-    && wget http://www.freetds.org/files/stable/freetds-1.1.21.tar.gz \
-    && tar -xzf freetds-1.1.21.tar.gz \
-    && cd freetds-1.1.21 \
-    && ./configure \
-    && make \
-    && make install \
-    && gem install tiny_tds \
-    && apt-get purge -y --auto-remove \
-                     -o APT::AutoRemove::RecommendsImportant=false \
-                     $BUILD_DEPS \
-    && clean-apt \
-    # Ensure fluent has enough file descriptors
-    && ulimit -n 65536
+
+FROM ruby:2.7-slim-buster as builder
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+COPY Gemfile /Gemfile
+
+SHELL ["/bin/bash", "-e", "-o", "pipefail", "-c"]
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends g++ gcc make libc6-dev wget build-essential && \
+    wget http://www.freetds.org/files/stable/freetds-1.2.4.tar.gz && \
+    tar -xzf freetds-1.2.4.tar.gz && \
+    cd freetds-1.2.4 && \
+    ./configure --prefix=/usr/local --with-tdsver=7.3 && \
+    make && \
+    make install && \
+    cd / && \
+    echo 'gem: --no-document' >> /etc/gemrc && \
+    gem install --file Gemfile
+
+FROM ruby:2.7-slim-buster
+
+ARG DEBIAN_FRONTEND=noninteractive
 
 # Copy the Fluentd configuration file for logging Docker container logs.
 COPY fluent.conf /etc/fluent/fluent.conf
-COPY run.sh /run.sh
+COPY entrypoint.sh /entrypoint.sh
+COPY --from=builder /usr/local/bundle/ /usr/local/bundle 
+
+SHELL ["/bin/bash", "-e", "-o", "pipefail", "-c"]
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends libjemalloc2 && \
+    apt-get clean -y && \
+    ulimit -n 65536 && \    
+    rm -rf \
+        /var/cache/debconf/* \
+        /var/lib/apt/lists/* \
+        /var/log/* \
+        /var/tmp/* \
+        rm -rf /tmp/*
 
 # Expose prometheus metrics.
 EXPOSE 80
 
-ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.1
+ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2
 
 # Start Fluentd to pick up our config that watches Docker container logs.
-CMD ["/run.sh"]
+CMD ["/entrypoint.sh"]

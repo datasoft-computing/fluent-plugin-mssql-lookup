@@ -1,5 +1,4 @@
 # Copyright 2017 The Kubernetes Authors.
-# Modifications copyright (C) 2019 Datasoft Computing Ltd 
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +16,7 @@
 
 PREFIX = quay.io/datasoft-computing
 IMAGE = fluentd
-TAG = v1.0.2
+TAG = v3.0.4
 
 build:
 	docker build --tag ${PREFIX}/${IMAGE}:${TAG} .

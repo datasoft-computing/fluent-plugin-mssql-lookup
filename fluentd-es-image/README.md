@@ -12,5 +12,3 @@ This image has been extended to include FreeTDS to support the use of the mssql-
 [elasticsearch]: https://www.elastic.co/products/elasticsearch
 [kubernetes]: https://kubernetes.io
 [image]: https://quay.io/repository/fluentd_elasticsearch/fluentd?tab=tags
-
-[![Analytics](https://kubernetes-site.appspot.com/UA-36037335-10/GitHub/cluster/addons/fluentd-elasticsearch/fluentd-es-image/README.md?pixel)]()
