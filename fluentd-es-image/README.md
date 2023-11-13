@@ -1,14 +1,12 @@
-# Collecting Docker Log Files with Fluentd and Elasticsearch
-This directory contains the source files needed to make a Docker image
-that collects Docker container log files using [Fluentd][fluentd]
-and sends them to an instance of [Elasticsearch][elasticsearch].
-This image is designed to be used as part of the [Kubernetes][kubernetes]
-cluster bring up process. The image resides at Quay under the name
-[quay.io/datasoft-computing/fluentd][image].
+Docker image for fluentd-elasticsearch which was used in Kubernetes.
+
+It's used now in the Kokuwa fluentd-elasticsearch Helm chart.
+
+Docker repo: https://quay.io/repository/fluentd_elasticsearch/fluentd
+
+Last version before removal in Kubernetes was: https://github.com/kubernetes/kubernetes/tree/9682b7248fb69733c2a0ee53618856e87b067f16/cluster/addons/fluentd-elasticsearch
+The image resides at Quay under the name [quay.io/datasoft-computing/fluentd][image].
 
 This image has been extended to include FreeTDS to support the use of the mssql-lookup plugin.
 
-[fluentd]: http://www.fluentd.org/
-[elasticsearch]: https://www.elastic.co/products/elasticsearch
-[kubernetes]: https://kubernetes.io
-[image]: https://quay.io/repository/fluentd_elasticsearch/fluentd?tab=tags
+Based on https://github.com/monotek/fluentd-elasticsearch

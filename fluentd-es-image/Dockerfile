@@ -16,7 +16,7 @@
 # to run Fluentd with an Elasticsearch plug-in and the
 # provided configuration file.
 # The image acts as an executable for the binary /usr/sbin/td-agent.
-# Note that fluentd is run with root permssion to allow access to
+# Note that fluentd is run with root permission to allow access to
 # log files with root only access under /var/log/containers/*
 
 # 1. Install & configure dependencies.
@@ -24,7 +24,7 @@
 # 3. Remove build dependencies.
 # 4. Cleanup leftover caches & files.
 
-FROM ruby:2.7-slim-buster as builder
+FROM ruby:3.2.2-slim as builder
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -32,6 +32,7 @@ COPY Gemfile /Gemfile
 
 SHELL ["/bin/bash", "-e", "-o", "pipefail", "-c"]
 
+# hadolint ignore=DL3008,DL3028
 RUN apt-get update && \
     apt-get install -y --no-install-recommends g++ gcc make libc6-dev wget build-essential && \
     wget http://www.freetds.org/files/stable/freetds-1.2.4.tar.gz && \
@@ -41,10 +42,11 @@ RUN apt-get update && \
     make && \
     make install && \
     cd / && \
+    rm -rf /var/lib/apt/lists/* && \
     echo 'gem: --no-document' >> /etc/gemrc && \
     gem install --file Gemfile
 
-FROM ruby:2.7-slim-buster
+FROM ruby:3.2.2-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -56,10 +58,11 @@ COPY --from=builder /usr/local/lib /usr/local/lib
 
 SHELL ["/bin/bash", "-e", "-o", "pipefail", "-c"]
 
+# hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install -y --no-install-recommends libjemalloc2 && \
     apt-get clean -y && \
-    ulimit -n 65536 && \    
+    ulimit -n 65536 && \
     rm -rf \
         /var/cache/debconf/* \
         /var/lib/apt/lists/* \

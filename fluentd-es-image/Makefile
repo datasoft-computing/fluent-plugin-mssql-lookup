@@ -16,7 +16,7 @@
 
 PREFIX = quay.io/datasoft-computing
 IMAGE = fluentd
-TAG = v3.2.0
+TAG = v4.6.2
 
 build:
 	docker build --tag ${PREFIX}/${IMAGE}:${TAG} .
